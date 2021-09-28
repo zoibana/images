@@ -34,7 +34,7 @@ $resource = $image->getResource();
 ```php
 
 /* Change image type */
-$image->setImageType(IMAGETYPE_WEBP);
+$newImage = $image->setImageType(IMAGETYPE_WEBP);
 
 /** Crop image */
 $image->resize($width, $height, Resize::ACTION_CROP);

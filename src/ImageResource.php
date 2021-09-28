@@ -30,7 +30,7 @@ abstract class ImageResource implements ImageFormatInterface
 	 */
 	public static function create($width, $height): ImageResource
 	{
-		$image = new static;
+		$image = new Png();
 		$image->resource = imagecreatetruecolor($width, $height);
 		$image->source_imagetype = IMAGETYPE_PNG;
 
@@ -146,7 +146,10 @@ abstract class ImageResource implements ImageFormatInterface
 	 */
 	public function resize($width, $height, $action = null): ImageResource
 	{
-		return (new Resize($this))->process($width, $height, $action);
+		$resizer = new Resize($this);
+		$resizedImageResource = $resizer->process($width, $height, $action);
+		$this->setResource($resizedImageResource->getResource());
+		return $this;
 	}
 
 	/**
@@ -157,12 +160,10 @@ abstract class ImageResource implements ImageFormatInterface
 	 */
 	public function scale($dest_width, $dest_height): ImageResource
 	{
-		return (new Scale($this))->process($dest_width, $dest_height);
-	}
-
-	public function __destruct()
-	{
-		$this->destroy();
+		$scaler = new Scale($this);
+		$scaledImageResource = $scaler->process($dest_width, $dest_height);
+		$this->setResource($scaledImageResource->getResource());
+		return $this;
 	}
 
 	public function destroy(): void

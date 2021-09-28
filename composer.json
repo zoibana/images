@@ -15,7 +15,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "zoibana\\Images\\": "/src/"
+      "zoibana\\Images\\": "src/"
     }
   },
   "minimum-stability": "dev"
