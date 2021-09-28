@@ -39,9 +39,10 @@ abstract class ImageResource implements ImageFormatInterface
 
 	/**
 	 * @param string $source_file
+	 * @param bool $initialize
 	 * @throws SourceImageFileNotFoundException
 	 */
-	public function setSourceFile(string $source_file): void
+	public function setSourceFile(string $source_file, bool $initialize = true): void
 	{
 		if (!file_exists($source_file)) {
 			throw new SourceImageFileNotFoundException();
@@ -49,7 +50,10 @@ abstract class ImageResource implements ImageFormatInterface
 
 		$this->source_file = $source_file;
 		$this->source_imagetype = static::imageType($this->source_file);
-		$this->fromFile($this->source_file);
+
+		if ($initialize) {
+			$this->fromFile($this->source_file);
+		}
 	}
 
 	public function setResource($resource): void
@@ -81,7 +85,7 @@ abstract class ImageResource implements ImageFormatInterface
 		if ($class) {
 			/** @var ImageResource $imgResource */
 			$imgResource = new $class();
-			$imgResource->setSourceFile($this->source_file);
+			$imgResource->setSourceFile($this->source_file, false);
 			$imgResource->setResource($this->resource);
 
 			return $imgResource;
