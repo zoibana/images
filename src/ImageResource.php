@@ -64,8 +64,10 @@ abstract class ImageResource implements ImageFormatInterface
 
 	public function saveAs(int $imagetype, string $dest_path = null, $quality = null): bool
 	{
-		$this->resource = $this->setImagetype($imagetype);
-		return $this->save($dest_path, $quality);
+		if ($imageResource = $this->setImagetype($imagetype)) {
+			return $imageResource->save($dest_path, $quality);
+		}
+		return false;
 	}
 
 	/**
