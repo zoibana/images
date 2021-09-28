@@ -1,0 +1,22 @@
+{
+  "name": "zoibana/images",
+  "description": "Tiny image manipulation library",
+  "type": "library",
+  "require": {
+    "php": ">=7.0",
+    "ext-gd": "*"
+  },
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Zoibana",
+      "email": "zoibana@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "zoibana\\Images\\": "/src/"
+    }
+  },
+  "minimum-stability": "dev"
+}

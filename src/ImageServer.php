@@ -1,21 +1,26 @@
 <?php
 
-namespace images\manipulate;
+namespace zoibana\Images;
 
-use Exception;
 use ReflectionClass;
+use zoibana\Images\Cache\ImageCache;
+use zoibana\Images\Exceptions\Cache\CouldNotSaveFileToCacheException;
+use zoibana\Images\Exceptions\Cache\CacheDirectoryNotFoundException;
+use zoibana\Images\Exceptions\Cache\CacheDirectoryNotWritableException;
+use zoibana\Images\Exceptions\SourceImageFileNotFoundException;
 
 class ImageServer
 {
-	/** @var \images\manipulate\ImageCache */
+	/** @var ImageCache */
 	protected $cache;
 
-	/** @var \images\manipulate\ImageResource|null */
+	/** @var ImageResource|null */
 	protected $resource;
 
 	/**
 	 * @param string $cacheDir
-	 * @throws \Exception
+	 * @throws CacheDirectoryNotFoundException
+	 * @throws CacheDirectoryNotWritableException
 	 */
 	public function enableCache(string $cacheDir): void
 	{
@@ -29,7 +34,7 @@ class ImageServer
 
 	/**
 	 * @param string $image_path
-	 * @throws \Exception
+	 * @throws SourceImageFileNotFoundException
 	 */
 	public function fromFile(string $image_path): void
 	{
@@ -40,32 +45,27 @@ class ImageServer
 	 * @param string|null $dest
 	 * @param null $quality
 	 * @return bool
-	 * @throws \Exception
+	 * @throws \ReflectionException
+	 * @throws CouldNotSaveFileToCacheException
 	 */
 	public function save(string $dest = null, $quality = null): bool
 	{
 		if ($this->resource) {
 
-			// Если включен кэш
 			if ($this->cache) {
 
 				$file = $this->resource->getSourceFile();
 				$fileName = basename($file, '.' . pathinfo($file, PATHINFO_EXTENSION));
 				$ext = strtolower((new ReflectionClass($this->resource))->getShortName());
 
-				// Вычисляем уникальный ключ для этого набора параметров
 				$cacheKey = "$fileName.q$quality.$ext";
 
-				// Отправляем браузеру заголовок текущего формата изображения
 				$this->resource->header();
 
 				$getter = function () use ($cacheKey, $quality) {
-					// Если в кэше нет - надо его туда сохранить
-					// Сохраняем туда через генерацию картинки прямо в папку кэша
 					$this->resource->save($this->cache->filePath($cacheKey), $quality);
 				};
 
-				// Проверяем наличие в кэше. Если есть - отдаем
 				$image = $this->cache->get($cacheKey, $getter);
 
 				if ($image) {
@@ -73,10 +73,9 @@ class ImageServer
 					exit;
 				}
 
-				throw new Exception('Could not save image to cache');
+				throw new CouldNotSaveFileToCacheException();
 			}
 
-			// Если не указана папка для сохранения - картинку отдает браузеру - нужно выдать правильный заголовок
 			if ($dest === null) {
 				$this->resource->header();
 			}
@@ -92,15 +91,11 @@ class ImageServer
 	 * @param string|null $dest
 	 * @param null $quality
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public function saveAs(int $imagetype, string $dest = null, $quality = null): bool
 	{
 		if ($this->resource) {
-			// Меняем формат изображения
-			$this->resource = $this->resource->setImagetype($imagetype);
-
-			return $this->save($dest, $quality);
+			return $this->resource->saveAs($imagetype, $dest, $quality);
 		}
 
 		return false;

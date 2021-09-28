@@ -1,9 +1,10 @@
 <?php
 
-namespace images\manipulate;
+namespace zoibana\Images\Cache;
 
 use Closure;
-use Exception;
+use zoibana\Images\Exceptions\Cache\CacheDirectoryNotFoundException;
+use zoibana\Images\Exceptions\Cache\CacheDirectoryNotWritableException;
 
 class ImageCache
 {
@@ -11,18 +12,17 @@ class ImageCache
 
 	/**
 	 * @param string $cacheDir
-	 * @throws \Exception
 	 */
 	public function __construct(string $cacheDir)
 	{
 		$this->dir = $cacheDir;
 
 		if (!is_dir($this->dir)) {
-			throw new Exception('Cache directory is not found');
+			throw new CacheDirectoryNotFoundException();
 		}
 
 		if (!is_writable($this->dir)) {
-			throw new Exception('Cache directory is not writable');
+			throw new CacheDirectoryNotWritableException();
 		}
 	}
 

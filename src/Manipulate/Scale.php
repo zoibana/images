@@ -1,8 +1,8 @@
 <?php
 
-namespace images\manipulate\resize;
+namespace zoibana\Images\Manipulate;
 
-use images\manipulate\ImageResource;
+use zoibana\Images\ImageResource;
 
 class Scale
 {

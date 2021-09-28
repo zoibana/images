@@ -1,6 +1,6 @@
 <?php
 
-namespace images\manipulate;
+namespace zoibana\Images;
 
 interface ImageFormatInterface
 {

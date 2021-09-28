@@ -1,8 +1,8 @@
 <?php
 
-namespace images\manipulate\resize;
+namespace zoibana\Images\Manipulate;
 
-use images\manipulate\ImageResource;
+use zoibana\Images\ImageResource;
 
 /**
  *
@@ -46,7 +46,7 @@ class Resize
 		self::ACTION_CROP => 'actionCrop',
 		self::ACTION_SCALE => 'actionScale',
 		self::ACTION_SCALE_WIDTH => 'actionScaleWidth',
-		self::ACTION_SCALE_HEIGHT => 'actionScaleheight',
+		self::ACTION_SCALE_HEIGHT => 'actionScaleHeight',
 	];
 
 	/** @var ImageResource */
@@ -135,13 +135,13 @@ class Resize
 	protected function preserveTransparency(): void
 	{
 		// Transparency for PNG images
-		if ($this->destImage->imageType() === IMAGETYPE_PNG) {
+		if ($this->destImage->getImageType() === IMAGETYPE_PNG) {
 			imagealphablending($this->destImage->getResource(), false);
 			imagesavealpha($this->destImage->getResource(), true);
 		}
 
 		// Transparency for GIF images
-		if ($this->destImage->imageType() === IMAGETYPE_GIF) {
+		if ($this->destImage->getImageType() === IMAGETYPE_GIF) {
 			$transparent_color = null;
 			$transparent_index = imagecolortransparent($this->destImage->getResource());
 			if ($transparent_index >= 0 && $transparent_index < imagecolorstotal($this->destImage->getResource())) {
@@ -199,7 +199,8 @@ class Resize
 		$this->thumbWidth = $this->destWidth;
 		$this->thumbHeight = ($this->srcHeight * $this->destWidth) / $this->srcWidth;
 
-		if ($this->srcWidth < $this->destWidth) { // если картинка меньше, то не меняем её размер
+		// If image less than passed width don't change dimensions
+		if ($this->srcWidth < $this->destWidth) {
 			$this->thumbWidth = $this->srcWidth;
 			$this->thumbHeight = $this->srcHeight;
 		}
@@ -209,7 +210,9 @@ class Resize
 	{
 		$this->thumbWidth = ($this->srcWidth * $this->destHeight) / $this->srcHeight;
 		$this->thumbHeight = $this->destHeight;
-		if ($this->srcHeight < $this->destHeight) { // если картинка меньше, то не меняем её размер
+
+		// If image less than passed height don't change dimensions
+		if ($this->srcHeight < $this->destHeight) {
 			$this->thumbWidth = $this->srcWidth;
 			$this->thumbHeight = $this->srcHeight;
 		}

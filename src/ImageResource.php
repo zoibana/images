@@ -1,14 +1,14 @@
 <?php
 
-namespace images\manipulate;
+namespace zoibana\Images;
 
-use Exception;
-use images\manipulate\formats\Gif;
-use images\manipulate\formats\Jpg;
-use images\manipulate\formats\Png;
-use images\manipulate\formats\Webp;
-use images\manipulate\resize\Resize;
-use images\manipulate\resize\Scale;
+use zoibana\Images\Exceptions\SourceImageFileNotFoundException;
+use zoibana\Images\Formats\Gif;
+use zoibana\Images\Formats\Jpg;
+use zoibana\Images\Formats\Png;
+use zoibana\Images\Formats\Webp;
+use zoibana\Images\Manipulate\Resize;
+use zoibana\Images\Manipulate\Scale;
 
 abstract class ImageResource implements ImageFormatInterface
 {
@@ -26,7 +26,7 @@ abstract class ImageResource implements ImageFormatInterface
 	/**
 	 * @param $width
 	 * @param $height
-	 * @return \images\manipulate\ImageResource
+	 * @return ImageResource
 	 */
 	public static function create($width, $height): ImageResource
 	{
@@ -38,16 +38,17 @@ abstract class ImageResource implements ImageFormatInterface
 	}
 
 	/**
-	 * @throws \Exception
+	 * @param string $source_file
+	 * @throws SourceImageFileNotFoundException
 	 */
 	public function setSourceFile(string $source_file): void
 	{
 		if (!file_exists($source_file)) {
-			throw new Exception('Image file is not found');
+			throw new SourceImageFileNotFoundException();
 		}
 
 		$this->source_file = $source_file;
-		$this->source_imagetype = static::getImageType($this->source_file);
+		$this->source_imagetype = static::imageType($this->source_file);
 		$this->fromFile($this->source_file);
 	}
 
@@ -61,12 +62,37 @@ abstract class ImageResource implements ImageFormatInterface
 		return $this->resource;
 	}
 
-	public static function getImageType(string $file): int
+	public function saveAs(int $imagetype, string $dest_path, $quality = null): bool
+	{
+		$this->resource = $this->setImagetype($imagetype);
+		return $this->save($dest_path, $quality);
+	}
+
+	/**
+	 * @param int $imagetype
+	 * @return ImageFormatInterface|null
+	 */
+	public function setImagetype(int $imagetype): ?ImageFormatInterface
+	{
+		$class = static::$formats[$imagetype] ?? null;
+		if ($class) {
+			/** @var ImageFormatInterface $imgResource */
+			$imgResource = new $class();
+			$imgResource->source_file = $this->source_file;
+			$imgResource->setResource($this->resource);
+
+			return $imgResource;
+		}
+
+		return null;
+	}
+
+	public static function imageType(string $file): int
 	{
 		return getimagesize($file)[2];
 	}
 
-	public function imageType(): int
+	public function getImageType(): int
 	{
 		return $this->source_imagetype;
 	}
@@ -78,6 +104,7 @@ abstract class ImageResource implements ImageFormatInterface
 
 	public function display(): bool
 	{
+		$this->header();
 		return $this->save();
 	}
 
@@ -91,38 +118,17 @@ abstract class ImageResource implements ImageFormatInterface
 
 	/**
 	 * @param string $file
-	 * @return \images\manipulate\ImageResource|null
-	 * @throws \Exception
+	 * @return ImageResource|null
+	 * @throws SourceImageFileNotFoundException
 	 */
 	public static function createFromFile(string $file): ?ImageResource
 	{
-		$class = static::$formats[static::getImageType($file)] ?? null;
+		$class = static::$formats[static::imageType($file)] ?? null;
 
 		if ($class) {
-			/** @var \images\manipulate\ImageResource $imgResource */
+			/** @var ImageResource $imgResource */
 			$imgResource = new $class();
 			$imgResource->setSourceFile($file);
-
-			return $imgResource;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Меняем формат изображения
-	 *
-	 * @param int $imagetype
-	 * @return \images\manipulate\ImageFormatInterface|null
-	 */
-	public function setImagetype(int $imagetype): ?ImageFormatInterface
-	{
-		$class = static::$formats[$imagetype] ?? null;
-		if ($class) {
-			/** @var \images\manipulate\ImageFormatInterface $imgResource */
-			$imgResource = new $class();
-			$imgResource->source_file = $this->source_file;
-			$imgResource->setResource($this->resource);
 
 			return $imgResource;
 		}

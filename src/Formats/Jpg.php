@@ -1,8 +1,8 @@
 <?php
 
-namespace images\manipulate\formats;
+namespace zoibana\Images\Formats;
 
-use images\manipulate\ImageResource;
+use zoibana\Images\ImageResource;
 
 class Jpg extends ImageResource
 {

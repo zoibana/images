@@ -1,8 +1,8 @@
 <?php
 
-namespace images\manipulate\formats;
+namespace zoibana\Images\Formats;
 
-use images\manipulate\ImageResource;
+use zoibana\Images\ImageResource;
 
 class Webp extends ImageResource
 {
@@ -11,7 +11,7 @@ class Webp extends ImageResource
 		$this->resource = imagecreatefromwebp($src_path);
 	}
 
-	public function save(string $dest_path = null, $quality = 70): bool
+	public function save(string $dest_path = null, $quality = null): bool
 	{
 		return imagewebp($this->resource, $dest_path, $quality);
 	}
