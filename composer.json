@@ -1,7 +1,7 @@
 {
   "name": "zoibana/images",
   "description": "Tiny image manipulation library",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "library",
   "require": {
     "php": ">=7.0",

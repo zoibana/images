@@ -73,14 +73,15 @@ abstract class ImageResource implements ImageFormatInterface
 	/**
 	 * @param int $imagetype
 	 * @return ImageFormatInterface|null
+	 * @throws SourceImageFileNotFoundException
 	 */
 	public function setImagetype(int $imagetype): ?ImageFormatInterface
 	{
 		$class = static::$formats[$imagetype] ?? null;
 		if ($class) {
-			/** @var ImageFormatInterface $imgResource */
+			/** @var ImageResource $imgResource */
 			$imgResource = new $class();
-			$imgResource->source_file = $this->source_file;
+			$imgResource->setSourceFile($this->source_file);
 			$imgResource->setResource($this->resource);
 
 			return $imgResource;
