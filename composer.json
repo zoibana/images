@@ -6,7 +6,7 @@
     "php": ">=7.0",
     "ext-gd": "*"
   },
-  "license": "proprietary",
+  "license": "Apache-2.0",
   "authors": [
     {
       "name": "Zoibana",
@@ -18,5 +18,8 @@
       "zoibana\\Images\\": "src/"
     }
   },
-  "minimum-stability": "dev"
+  "minimum-stability": "stable",
+  "support": {
+    "email": "zoibana@gmail.com"
+  }
 }
