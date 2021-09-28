@@ -95,7 +95,11 @@ class ImageServer
 	public function saveAs(int $imagetype, string $dest = null, $quality = null): bool
 	{
 		if ($this->resource) {
-			return $this->resource->saveAs($imagetype, $dest, $quality);
+			$this->resource = $this->resource->setImagetype($imagetype);
+			if ($dest === null) {
+				$this->resource->header();
+			}
+			return $this->resource->save($dest, $quality);
 		}
 
 		return false;
