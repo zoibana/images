@@ -13,7 +13,8 @@ class Jpg extends ImageResource
 
 	public function save(string $dest_path = null, $quality = null): bool
 	{
-		return imagejpeg($this->resource, $dest_path, $quality);
+		// quality could be integer in range 0-100. default = -1 ~= 75
+		return imagejpeg($this->resource, $dest_path, $quality ?? -1);
 	}
 
 	public function header(): void
