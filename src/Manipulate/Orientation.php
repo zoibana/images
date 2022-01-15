@@ -16,7 +16,7 @@ class Orientation
 	{
 		$this->sourceImage = $image;
 		$this->exif = function_exists('exif_read_data') && $image->getImageType() === IMAGETYPE_JPEG ?
-			exif_read_data($image->getResource()) : [];
+			exif_read_data($image->getSourceFile()) : [];
 	}
 
 	public function rotate()
