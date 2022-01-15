@@ -42,6 +42,9 @@ $image->resize($width, $height, Resize::ACTION_CROP);
 /** Scale image */
 $image->scale($width, $height, Resize::ACTION_SCALE);
 
+/** Rotate JPEG to correct orientation using EXIF data */
+$image->fixOrientation();
+
 ```
 
 ## Display and save images
@@ -92,7 +95,7 @@ $headers = getallheaders();
 $supportsWebp = strpos($headers['Accept'], 'image/webp') !== false;
 
 /** If client supports WEBP, display in WEBP format */
-if (supportsWebp) {
+if ($supportsWebp) {
   $server->saveAs(IMAGETYPE_WEBP, null, $quality);
   exit;
 }

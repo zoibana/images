@@ -7,6 +7,7 @@ use zoibana\Images\Formats\Gif;
 use zoibana\Images\Formats\Jpg;
 use zoibana\Images\Formats\Png;
 use zoibana\Images\Formats\Webp;
+use zoibana\Images\Manipulate\Orientation;
 use zoibana\Images\Manipulate\Resize;
 use zoibana\Images\Manipulate\Scale;
 
@@ -170,6 +171,13 @@ abstract class ImageResource implements ImageFormatInterface
 		$scaler = new Scale($this);
 		$scaledImageResource = $scaler->process($dest_width, $dest_height);
 		$this->setResource($scaledImageResource->getResource());
+		return $this;
+	}
+
+	public function fixOrientation(): ImageResource
+	{
+		$orientation = new Orientation($this);
+		$this->setResource($orientation->rotate());
 		return $this;
 	}
 
